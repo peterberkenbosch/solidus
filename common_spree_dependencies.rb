@@ -37,6 +37,8 @@ group :test do
   gem 'rails-controller-testing'
 end
 
+gem 'rabl', github: 'jhawthorn/rabl', branch: 'rails5'
+
 group :test, :development do
   gem 'rubocop'
   gem 'pry'
