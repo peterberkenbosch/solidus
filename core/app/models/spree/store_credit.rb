@@ -17,6 +17,7 @@ class Spree::StoreCredit < Spree::Base
   belongs_to :category, class_name: "Spree::StoreCreditCategory"
   belongs_to :credit_type, class_name: 'Spree::StoreCreditType', foreign_key: 'type_id'
   has_many :store_credit_events
+  has_many :store_credit_ledger_entries
 
   validates_presence_of :user_id, :category_id, :type_id, :created_by_id, :currency
   validates_numericality_of :amount, { greater_than: 0 }
