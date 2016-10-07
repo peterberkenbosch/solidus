@@ -267,7 +267,12 @@ class Spree::StoreCredit < Spree::Base
       store_credit_ledger_entries.create!({amount: amount})
     else
       return if action == AUTHORIZE_ACTION
-      store_credit_ledger_entries.create!({amount: -1 * action_amount}) if action_amount
+      return if !action_amount
+      if action != VOID_ACTION
+        store_credit_ledger_entries.create!({amount: -1 * action_amount})
+      else
+        store_credit_ledger_entries.create!({amount: action_amount})
+      end
     end
   end
 
