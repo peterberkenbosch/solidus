@@ -323,6 +323,10 @@ describe Spree::StoreCredit do
       it "does not update the store credit model" do
         expect { subject }.to_not change { store_credit }
       end
+
+      it "does not add an entry to the ledger" do
+        expect { subject }.to_not change { store_credit.store_credit_ledger_entries.count }
+      end
     end
 
     context "currency mismatch" do
@@ -360,6 +364,14 @@ describe Spree::StoreCredit do
       it "updates the used amount to the current used amount plus the captured amount" do
         subject
         expect(store_credit.reload.amount_used).to eq authorized_amount - remaining_authorized_amount
+      end
+
+      it "adds an entry to the ledger" do
+        expect { subject }.to change { Spree::StoreCreditLedgerEntry.count }.by(1)
+      end
+
+      it "will lower the balance with the amount captured" do
+        expect { subject }.to change { store_credit.ledger_balance }.by(-9.0)
       end
 
       context "originator is present" do

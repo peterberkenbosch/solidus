@@ -263,7 +263,11 @@ class Spree::StoreCredit < Spree::Base
   end
 
   def create_ledger_entry
-    store_credit_ledger_entries.create!({amount: amount})
+    if store_credit_ledger_entries.empty?
+      store_credit_ledger_entries.create!({amount: amount})
+    else
+      store_credit_ledger_entries.create!({amount: -1 * action_amount})
+    end
   end
 
   def amount_used_less_than_or_equal_to_amount
