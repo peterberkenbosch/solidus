@@ -31,6 +31,7 @@ class Spree::StoreCredit < Spree::Base
   scope :order_by_priority, -> { includes(:credit_type).order('spree_store_credit_types.priority ASC') }
 
   after_save :store_event
+  after_save :create_ledger_entry
   before_validation :associate_credit_type
   before_validation :validate_category_unchanged, on: :update
   before_destroy :validate_no_amount_used
@@ -201,6 +202,10 @@ class Spree::StoreCredit < Spree::Base
     end
   end
 
+  def ledger_balance
+    store_credit_ledger_entries.sum(:amount)
+  end
+
   class << self
     def default_created_by
       Spree.user_class.find_by(email: DEFAULT_CREATED_BY_EMAIL)
@@ -255,6 +260,10 @@ class Spree::StoreCredit < Spree::Base
       originator: action_originator,
       update_reason: update_reason
     })
+  end
+
+  def create_ledger_entry
+    store_credit_ledger_entries.create!({amount: amount})
   end
 
   def amount_used_less_than_or_equal_to_amount
