@@ -56,6 +56,19 @@ describe Spree::StoreCredit do
         expect{ subject }.to_not change{ store_credit.credit_type }
       end
     end
+
+    context "creating ledger entry" do
+      let(:store_credit_attrs) { {amount: 250} }
+
+      it "on create" do
+        expect{store_credit.save}.to change {store_credit.store_credit_ledger_entries.count}.by 1
+      end
+
+      it "will have a balance equal to the amount" do
+        store_credit.save
+        expect(store_credit.ledger_balance).to eql 250
+      end
+    end
   end
 
   describe "validations" do
