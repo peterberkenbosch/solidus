@@ -263,10 +263,10 @@ class Spree::StoreCredit < Spree::Base
   end
 
   def create_ledger_entry
-    return if action == AUTHORIZE_ACTION
     if store_credit_ledger_entries.empty?
       store_credit_ledger_entries.create!({amount: amount})
     else
+      return if action == AUTHORIZE_ACTION
       store_credit_ledger_entries.create!({amount: -1 * action_amount}) if action_amount
     end
   end
