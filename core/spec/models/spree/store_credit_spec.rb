@@ -224,6 +224,12 @@ describe Spree::StoreCredit do
           expect(store_credit.reload.amount_authorized).to eq(authorization_amount + added_authorization_amount)
         end
 
+        it "will not store a ledger entry" do
+          expect {
+            store_credit.authorize(added_authorization_amount, store_credit.currency)
+          }.to_not change{store_credit.store_credit_ledger_entries.count}
+        end
+
         context "originator is present" do
           let(:originator) { create(:user) } # won't actually be a user. just giving it a valid model here
 
