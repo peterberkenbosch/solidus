@@ -552,6 +552,10 @@ describe Spree::StoreCredit do
           expect { subject }.to_not change { store_credit.store_credit_events.count }
         end
 
+        it "does not create a new store credit ledger entry on the parent store credit" do
+          expect { subject }.to_not change { store_credit.store_credit_ledger_entries.count }
+        end
+
         context "credits the passed amount to a new store credit record" do
           before do
             subject
