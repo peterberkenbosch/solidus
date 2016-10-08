@@ -377,7 +377,8 @@ describe Spree::StoreCredit do
       end
 
       it "will lower the balance with the amount captured" do
-        expect { subject }.to change { store_credit.ledger_balance }.by(-9.0)
+        captured_amount = authorized_amount - remaining_authorized_amount
+        expect { subject }.to change { store_credit.ledger_balance }.by(-1 * captured_amount)
       end
 
       context "originator is present" do
@@ -449,12 +450,8 @@ describe Spree::StoreCredit do
         expect { subject }.to change{ store_credit.amount_authorized.to_f }.by(-authorized_amount)
       end
 
-      it "adds an entry to the ledger" do
-        expect { subject }.to change { Spree::StoreCreditLedgerEntry.count }.by(1)
-      end
-
-      it "will up the balance with the amount voided" do
-        expect { subject }.to change { store_credit.ledger_balance }.by(authorized_amount)
+      it "will not add an entry to the ledger" do
+        expect { subject }.to_not change { Spree::StoreCreditLedgerEntry.count }
       end
 
       context "originator is present" do
