@@ -869,6 +869,25 @@ describe Spree::StoreCredit do
         subject
         expect(store_credit.store_credit_events.find_by(action: Spree::StoreCredit::ADJUSTMENT_ACTION).originator).to eq invalidation_user
       end
+
+      it "adds an entry to the ledger" do
+        expect { subject }.to change { Spree::StoreCreditLedgerEntry.count }.by(1)
+      end
+
+      it "will update the balance to match the updated amount" do
+        # amount is 30
+        # adjusted amount is 10
+        # expecting the balance to change by -20
+        expect { subject }.to change { store_credit.ledger_balance }.by(-20)
+      end
+
+      it "will return the correct ledger balance" do
+        # amount is 30
+        # adjusted amount is 10
+        # expecting the balance to return the adjusted amount
+        subject
+        expect(store_credit.ledger_balance).to eql amount
+      end
     end
 
     context "amount is invalid" do
