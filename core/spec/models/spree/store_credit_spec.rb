@@ -609,6 +609,15 @@ describe Spree::StoreCredit do
         it "creates a new store credit event" do
           expect { subject }.to change { store_credit.store_credit_events.count }.by(1)
         end
+
+        it "adds an entry to the ledger" do
+          expect { subject }.to change { store_credit.store_credit_ledger_entries.count }.by(1)
+        end
+
+        it "will up the balance with the amount credited" do
+          expect { subject }.to change { store_credit.ledger_balance }.by(credit_amount)
+        end
+
       end
     end
   end
