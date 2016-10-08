@@ -576,6 +576,14 @@ describe Spree::StoreCredit do
           it "sets a memo" do
             expect(@new_store_credit.memo).to eq "This is a credit from store credit ID #{store_credit.id}"
           end
+
+          it "adds an entry to the new store credit ledger entries" do
+            expect(@new_store_credit.store_credit_ledger_entries.count).to eql 1
+          end
+
+          it "returns the correct opening balance amount" do
+            expect(@new_store_credit.ledger_balance).to eql credit_amount
+          end
         end
 
         context "originator is present" do
