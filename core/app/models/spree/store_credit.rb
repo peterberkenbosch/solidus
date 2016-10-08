@@ -195,6 +195,7 @@ class Spree::StoreCredit < Spree::Base
       self.update_reason = reason
       self.action_originator = user_performing_invalidation
       self.invalidated_at = Time.current
+      self.action_amount = -1 * ledger_balance
       save
     else
       errors.add(:invalidated_at, Spree.t("store_credit.errors.cannot_invalidate_uncaptured_authorization"))
@@ -269,7 +270,7 @@ class Spree::StoreCredit < Spree::Base
       return if [AUTHORIZE_ACTION, VOID_ACTION].include?(action)
       return if !action_amount
       ledger_entry_amount = -1 * action_amount
-      ledger_entry_amount = action_amount if [ADJUSTMENT_ACTION, CREDIT_ACTION].include?(action)
+      ledger_entry_amount = action_amount if [INVALIDATE_ACTION, ADJUSTMENT_ACTION, CREDIT_ACTION].include?(action)
       store_credit_ledger_entries.create!({amount: ledger_entry_amount})
     end
   end

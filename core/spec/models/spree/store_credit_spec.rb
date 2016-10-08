@@ -900,6 +900,10 @@ describe Spree::StoreCredit do
       it "doesn't create an adjustment store credit event" do
         expect { subject }.to_not change { store_credit.store_credit_events.where(action: Spree::StoreCredit::ADJUSTMENT_ACTION).count }
       end
+
+      it "doesn't create a store credit ledger entry" do
+        expect { subject }.to_not change { store_credit.store_credit_ledger_entries.count }
+      end
     end
   end
 
@@ -942,6 +946,20 @@ describe Spree::StoreCredit do
 
       it "creates a store credit event for the invalidation" do
         expect { subject }.to change { store_credit.store_credit_events.where(action: Spree::StoreCredit::INVALIDATE_ACTION).count }.from(0).to(1)
+      end
+
+      it "adds an entry to the ledger" do
+        expect { subject }.to change { Spree::StoreCreditLedgerEntry.count }.by(1)
+      end
+
+      it "will lower the ledger balance with the last remaining balance" do
+        remaining_balance = store_credit.ledger_balance
+        expect { subject }.to change { store_credit.ledger_balance }.by(-1*remaining_balance)
+      end
+
+      it "will made the ledger balance be 0.0" do
+        subject
+        expect(store_credit.ledger_balance).to eql 0.0
       end
 
       it "assigns the originator as the user that is performing the invalidation" do
