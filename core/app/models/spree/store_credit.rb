@@ -31,7 +31,7 @@ class Spree::StoreCredit < Spree::Base
   scope :order_by_priority, -> { includes(:credit_type).order('spree_store_credit_types.priority ASC') }
 
   after_save :store_event
-  after_save :create_ledger_entry
+  after_create :create_ledger_entry
   before_validation :associate_credit_type
   before_validation :validate_category_unchanged, on: :update
   before_destroy :validate_no_amount_used
@@ -100,6 +100,9 @@ class Spree::StoreCredit < Spree::Base
           amount_used: amount_used + amount,
           amount_authorized: amount_authorized - auth_event.amount
         })
+
+        debit_ledger(amount, options[:action_originator])
+
         authorization_code
       end
     else
@@ -186,7 +189,17 @@ class Spree::StoreCredit < Spree::Base
     self.action = ADJUSTMENT_ACTION
     self.update_reason = reason
     self.action_originator = user_performing_update
-    save
+    if save
+      if self.action_amount > 0
+        credit_ledger(self.action_amount, user_performing_update)
+        true
+      elsif self.action_amount < 0
+        debit_ledger(-1 * self.action_amount, user_performing_update)
+        true
+      end
+    else
+      false
+    end
   end
 
   def invalidate(reason, user_performing_invalidation)
@@ -195,8 +208,8 @@ class Spree::StoreCredit < Spree::Base
       self.update_reason = reason
       self.action_originator = user_performing_invalidation
       self.invalidated_at = Time.current
-      self.action_amount = -1 * ledger_balance
-      save
+      self.action_amount = ledger_balance
+      debit_ledger(self.action_amount, user_performing_invalidation) if save
     else
       errors.add(:invalidated_at, Spree.t("store_credit.errors.cannot_invalidate_uncaptured_authorization"))
       return false
@@ -218,15 +231,16 @@ class Spree::StoreCredit < Spree::Base
   def create_credit_record(amount, action_attributes = {})
     # Setting credit_to_new_allocation to true will create a new allocation anytime #credit is called
     # If it is not set, it will update the store credit's amount in place
-    credit = if Spree::Config[:credit_to_new_allocation]
-      Spree::StoreCredit.new(create_credit_record_params(amount))
+    if Spree::Config[:credit_to_new_allocation]
+      credit = Spree::StoreCredit.new(create_credit_record_params(amount))
+      credit.assign_attributes(action_attributes)
+      credit.save!
     else
       self.amount_used = amount_used - amount
-      self
+      self.assign_attributes(action_attributes)
+      self.save!
+      credit_ledger(amount, action_attributes[:action_originator])
     end
-
-    credit.assign_attributes(action_attributes)
-    credit.save!
   end
 
   def create_credit_record_params(amount)
@@ -263,21 +277,26 @@ class Spree::StoreCredit < Spree::Base
     })
   end
 
+  def debit_ledger(amount, originator=nil)
+    store_credit_ledger_entries.create!(
+      {
+        amount: -1 * amount,
+        originator: originator
+      }
+    )
+  end
+
+  def credit_ledger(amount, originator=nil)
+    store_credit_ledger_entries.create!(
+      {
+        amount: amount,
+        originator: originator
+      }
+    )
+  end
+
   def create_ledger_entry
-    if store_credit_ledger_entries.empty?
-      store_credit_ledger_entries.create!({ amount: amount })
-    else
-      return if !action_amount
-      return if [AUTHORIZE_ACTION, VOID_ACTION].include?(action)
-      ledger_entry_amount = -1 * action_amount
-      ledger_entry_amount = action_amount if [INVALIDATE_ACTION, ADJUSTMENT_ACTION, CREDIT_ACTION].include?(action)
-      store_credit_ledger_entries.create!(
-        {
-          amount: ledger_entry_amount,
-          originator: action_originator
-        }
-      )
-    end
+    store_credit_ledger_entries.create!({ amount: amount, originator: action_originator })
   end
 
   def amount_used_less_than_or_equal_to_amount
