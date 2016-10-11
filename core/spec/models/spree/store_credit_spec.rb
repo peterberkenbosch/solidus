@@ -373,7 +373,7 @@ describe Spree::StoreCredit do
       end
 
       it "adds an entry to the ledger" do
-        expect { subject }.to change { Spree::StoreCreditLedgerEntry.count }.by(1)
+        expect { subject }.to change { store_credit.store_credit_ledger_entries.count }.by(1)
       end
 
       it "will lower the balance with the amount captured" do
@@ -390,8 +390,8 @@ describe Spree::StoreCredit do
         end
 
         it "records the originator on the ledger entry" do
-          expect { subject }.to change { Spree::StoreCreditLedgerEntry.count }.by(1)
-          expect(Spree::StoreCreditLedgerEntry.last.originator).to eq originator
+          expect { subject }.to change { store_credit.store_credit_ledger_entries.count }.by(1)
+          expect(store_credit.store_credit_ledger_entries.last.originator).to eq originator
         end
       end
     end
@@ -456,7 +456,7 @@ describe Spree::StoreCredit do
       end
 
       it "will not add an entry to the ledger" do
-        expect { subject }.to_not change { Spree::StoreCreditLedgerEntry.count }
+        expect { subject }.to_not change { store_credit.store_credit_ledger_entries.count }
       end
 
       context "originator is present" do
@@ -875,7 +875,7 @@ describe Spree::StoreCredit do
       end
 
       it "adds an entry to the ledger" do
-        expect { subject }.to change { Spree::StoreCreditLedgerEntry.count }.by(1)
+        expect { subject }.to change { store_credit.store_credit_ledger_entries.count }.by(1)
       end
 
       it "records the originator on the ledger entry" do
@@ -958,7 +958,7 @@ describe Spree::StoreCredit do
       end
 
       it "adds an entry to the ledger" do
-        expect { subject }.to change { Spree::StoreCreditLedgerEntry.count }.by(1)
+        expect { subject }.to change { store_credit.store_credit_ledger_entries.count }.by(1)
       end
 
       it "will lower the ledger balance with the last remaining balance" do
