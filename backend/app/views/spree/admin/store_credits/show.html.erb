@@ -110,3 +110,25 @@
     </tbody>
   </table>
 </fieldset>
+
+<fieldset>
+  <legend align='center'><%= Spree.t("admin.store_credits.ledger_entries") %></legend>
+  <table>
+    <thead>
+      <tr>
+        <th><%= Spree.t(:date) %></th>
+        <th><%= Spree::StoreCreditLedgerEntry.human_attribute_name(:amount) %></th>
+        <th><%= Spree::StoreCreditLedgerEntry.human_attribute_name(:originator) %></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @store_credit.store_credit_ledger_entries.each do |entry| %>
+        <tr>
+          <td><%= pretty_time(entry.created_at) %></td>
+          <td><%= entry.amount %></td>
+          <td><%= store_credit_event_originator_link(entry) %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</fieldset>
