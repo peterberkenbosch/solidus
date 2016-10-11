@@ -237,7 +237,7 @@ class Spree::StoreCredit < Spree::Base
       credit.save!
     else
       self.amount_used = amount_used - amount
-      self.assign_attributes(action_attributes)
+      assign_attributes(action_attributes)
       save!
       credit_ledger(amount, action_attributes[:action_originator])
     end

@@ -61,7 +61,7 @@ describe Spree::StoreCredit do
       let(:store_credit_attrs) { { amount: 250 } }
 
       it "on create" do
-        expect{store_credit.save}.to change { store_credit.store_credit_ledger_entries.count }.by 1
+        expect{ store_credit.save }.to change { store_credit.store_credit_ledger_entries.count }.by 1
       end
 
       it "will have a balance equal to the amount" do
