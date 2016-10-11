@@ -846,10 +846,10 @@ describe Spree::StoreCredit do
   end
 
   describe "#update_amount" do
-    let(:invalidation_user) { create(:user) }
-    let(:invalidation_reason) { create(:store_credit_update_reason) }
+    let(:updating_user) { create(:user) }
+    let(:update_reason) { create(:store_credit_update_reason) }
 
-    subject { store_credit.update_amount(amount, invalidation_reason, invalidation_user) }
+    subject { store_credit.update_amount(amount, update_reason, updating_user) }
 
     context "amount is valid" do
       let(:amount) { 10.0 }
@@ -871,7 +871,7 @@ describe Spree::StoreCredit do
 
       it "sets the originator on the store credit event correctly" do
         subject
-        expect(store_credit.store_credit_events.find_by(action: Spree::StoreCredit::ADJUSTMENT_ACTION).originator).to eq invalidation_user
+        expect(store_credit.store_credit_events.find_by(action: Spree::StoreCredit::ADJUSTMENT_ACTION).originator).to eq updating_user
       end
 
       it "adds an entry to the ledger" do
@@ -880,7 +880,7 @@ describe Spree::StoreCredit do
 
       it "records the originator on the ledger entry" do
         subject
-        expect(Spree::StoreCreditLedgerEntry.last.originator).to eq invalidation_user
+        expect(Spree::StoreCreditLedgerEntry.last.originator).to eq updating_user
       end
 
       it "will update the balance to match the updated amount" do
@@ -896,6 +896,25 @@ describe Spree::StoreCredit do
         # expecting the balance to return the adjusted amount
         subject
         expect(store_credit.ledger_balance).to eql amount
+      end
+
+      context "and larger then the current store credit amount" do
+        let(:amount) { 50.0 }
+
+        it "will update the balance to match the updated amount" do
+          # amount is 30
+          # adjusted amount is 50
+          # expecting the balance to change by 20
+          expect { subject }.to change { store_credit.ledger_balance }.by(20)
+        end
+
+        it "will return the correct ledger balance" do
+          # amount is 30
+          # adjusted amount is 50
+          # expecting the balance to return the adjusted amount
+          subject
+          expect(store_credit.ledger_balance).to eql amount
+        end
       end
     end
 

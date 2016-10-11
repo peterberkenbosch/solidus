@@ -31,7 +31,7 @@ class Spree::StoreCredit < Spree::Base
   scope :order_by_priority, -> { includes(:credit_type).order('spree_store_credit_types.priority ASC') }
 
   after_save :store_event
-  after_create :create_ledger_entry
+  after_create :add_init_ledger_entry
   before_validation :associate_credit_type
   before_validation :validate_category_unchanged, on: :update
   before_destroy :validate_no_amount_used
@@ -101,7 +101,7 @@ class Spree::StoreCredit < Spree::Base
           amount_authorized: amount_authorized - auth_event.amount
         })
 
-        debit_ledger(amount, options[:action_originator])
+        debit(amount, options)
 
         authorization_code
       end
@@ -128,25 +128,35 @@ class Spree::StoreCredit < Spree::Base
     end
   end
 
-  def credit(amount, authorization_code, order_currency, options = {})
-    # Find the amount related to this authorization_code in order to add the store credit back
-    capture_event = store_credit_events.find_by(action: CAPTURE_ACTION, authorization_code: authorization_code)
+  def debit(amount, options = {})
+    # make sure debit amounts are stored as negative number
+    amount = -1 * amount unless amount < 0
+    create_ledger_entry(amount, options[:action_originator])
+  end
 
-    if currency != order_currency # sanity check to make sure the order currency hasn't changed since the auth
-      errors.add(:base, Spree.t('store_credit.currency_mismatch'))
-      false
-    elsif capture_event && amount <= capture_event.amount
-      action_attributes = {
-        action: CREDIT_ACTION,
-        action_amount: amount,
-        action_originator: options[:action_originator],
-        action_authorization_code: authorization_code
-      }
-      create_credit_record(amount, action_attributes)
-      true
+  def credit(amount, authorization_code = nil, order_currency = "USD", options = {})
+    if authorization_code
+      # Find the amount related to this authorization_code in order to add the store credit back
+      capture_event = store_credit_events.find_by(action: CAPTURE_ACTION, authorization_code: authorization_code)
+
+      if currency != order_currency # sanity check to make sure the order currency hasn't changed since the auth
+        errors.add(:base, Spree.t('store_credit.currency_mismatch'))
+        false
+      elsif capture_event && amount <= capture_event.amount
+        action_attributes = {
+          action: CREDIT_ACTION,
+          action_amount: amount,
+          action_originator: options[:action_originator],
+          action_authorization_code: authorization_code
+        }
+        create_credit_record(amount, action_attributes)
+        true
+      else
+        errors.add(:base, Spree.t('store_credit.unable_to_credit', auth_code: authorization_code))
+        false
+      end
     else
-      errors.add(:base, Spree.t('store_credit.unable_to_credit', auth_code: authorization_code))
-      false
+      create_ledger_entry(amount, options[:action_originator])
     end
   end
 
@@ -189,12 +199,13 @@ class Spree::StoreCredit < Spree::Base
     self.action = ADJUSTMENT_ACTION
     self.update_reason = reason
     self.action_originator = user_performing_update
+    ledger_options = { action_originator: user_performing_update }
     if save
       if action_amount > 0
-        credit_ledger(action_amount, user_performing_update)
+        credit(action_amount, nil, currency, ledger_options)
         true
       elsif action_amount < 0
-        debit_ledger(-1 * action_amount, user_performing_update)
+        debit(action_amount, ledger_options)
         true
       end
     else
@@ -209,7 +220,7 @@ class Spree::StoreCredit < Spree::Base
       self.action_originator = user_performing_invalidation
       self.invalidated_at = Time.current
       self.action_amount = ledger_balance
-      debit_ledger(ledger_balance, user_performing_invalidation) if save
+      debit(ledger_balance, { action_originator: user_performing_invalidation }) if save
     else
       errors.add(:invalidated_at, Spree.t("store_credit.errors.cannot_invalidate_uncaptured_authorization"))
       return false
@@ -239,7 +250,7 @@ class Spree::StoreCredit < Spree::Base
       self.amount_used = amount_used - amount
       assign_attributes(action_attributes)
       save!
-      credit_ledger(amount, action_attributes[:action_originator])
+      create_ledger_entry(amount, action_attributes[:action_originator])
     end
   end
 
@@ -277,26 +288,17 @@ class Spree::StoreCredit < Spree::Base
     })
   end
 
-  def debit_ledger(amount, originator = nil)
-    store_credit_ledger_entries.create!(
-      {
-        amount: -1 * amount,
-        originator: originator
-      }
-    )
+  def add_init_ledger_entry
+    create_ledger_entry(amount, action_originator)
   end
 
-  def credit_ledger(amount, originator = nil)
+  def create_ledger_entry(amount, originator)
     store_credit_ledger_entries.create!(
       {
         amount: amount,
         originator: originator
       }
     )
-  end
-
-  def create_ledger_entry
-    store_credit_ledger_entries.create!({ amount: amount, originator: action_originator })
   end
 
   def amount_used_less_than_or_equal_to_amount
