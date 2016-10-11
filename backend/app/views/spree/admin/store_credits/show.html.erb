@@ -116,19 +116,29 @@
   <table>
     <thead>
       <tr>
-        <th><%= Spree.t(:date) %></th>
         <th><%= Spree::StoreCreditLedgerEntry.human_attribute_name(:amount) %></th>
         <th><%= Spree::StoreCreditLedgerEntry.human_attribute_name(:originator) %></th>
+        <th><%= Spree.t(:date) %></th>
       </tr>
     </thead>
     <tbody>
       <% @store_credit.store_credit_ledger_entries.each do |entry| %>
         <tr>
-          <td><%= pretty_time(entry.created_at) %></td>
-          <td><%= entry.amount %></td>
+          <td><%= Spree::Money.new(entry.amount) %></td>
           <td><%= store_credit_originator_link(entry) %></td>
+          <td><%= pretty_time(entry.created_at) %></td>
         </tr>
       <% end %>
+
+      <tr>
+        <td colspan="3">
+          <% balance = @store_credit.store_credit_ledger_entries.sum(:amount) %>
+
+          <strong>
+            Current Balance: <%= Spree::Money.new(balance) %>
+          </strong>
+        </td>
+      </tr>
     </tbody>
   </table>
 </fieldset>
