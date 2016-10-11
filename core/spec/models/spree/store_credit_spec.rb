@@ -981,7 +981,6 @@ describe Spree::StoreCredit do
         expect(Spree::StoreCreditLedgerEntry.last.originator).to eq invalidation_user
       end
 
-
       it "assigns the originator as the user that is performing the invalidation" do
         subject
         expect(store_credit.store_credit_events.find_by(action: Spree::StoreCredit::INVALIDATE_ACTION).originator).to eq invalidation_user
