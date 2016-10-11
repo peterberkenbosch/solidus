@@ -190,11 +190,11 @@ class Spree::StoreCredit < Spree::Base
     self.update_reason = reason
     self.action_originator = user_performing_update
     if save
-      if self.action_amount > 0
-        credit_ledger(self.action_amount, user_performing_update)
+      if action_amount > 0
+        credit_ledger(action_amount, user_performing_update)
         true
-      elsif self.action_amount < 0
-        debit_ledger(-1 * self.action_amount, user_performing_update)
+      elsif action_amount < 0
+        debit_ledger(-1 * action_amount, user_performing_update)
         true
       end
     else
@@ -209,7 +209,7 @@ class Spree::StoreCredit < Spree::Base
       self.action_originator = user_performing_invalidation
       self.invalidated_at = Time.current
       self.action_amount = ledger_balance
-      debit_ledger(self.action_amount, user_performing_invalidation) if save
+      debit_ledger(ledger_balance, user_performing_invalidation) if save
     else
       errors.add(:invalidated_at, Spree.t("store_credit.errors.cannot_invalidate_uncaptured_authorization"))
       return false
@@ -238,7 +238,7 @@ class Spree::StoreCredit < Spree::Base
     else
       self.amount_used = amount_used - amount
       self.assign_attributes(action_attributes)
-      self.save!
+      save!
       credit_ledger(amount, action_attributes[:action_originator])
     end
   end
@@ -277,7 +277,7 @@ class Spree::StoreCredit < Spree::Base
     })
   end
 
-  def debit_ledger(amount, originator=nil)
+  def debit_ledger(amount, originator = nil)
     store_credit_ledger_entries.create!(
       {
         amount: -1 * amount,
@@ -286,7 +286,7 @@ class Spree::StoreCredit < Spree::Base
     )
   end
 
-  def credit_ledger(amount, originator=nil)
+  def credit_ledger(amount, originator = nil)
     store_credit_ledger_entries.create!(
       {
         amount: amount,
