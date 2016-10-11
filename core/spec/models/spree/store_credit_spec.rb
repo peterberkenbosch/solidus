@@ -884,7 +884,7 @@ describe Spree::StoreCredit do
       end
 
       it "records the originator on the ledger entry" do
-        expect { subject }.to change { Spree::StoreCreditLedgerEntry.count }.by(1)
+        subject
         expect(Spree::StoreCreditLedgerEntry.last.originator).to eq invalidation_user
       end
 
@@ -975,6 +975,12 @@ describe Spree::StoreCredit do
         subject
         expect(store_credit.ledger_balance).to eql 0.0
       end
+
+      it "records the originator on the ledger entry" do
+        subject
+        expect(Spree::StoreCreditLedgerEntry.last.originator).to eq invalidation_user
+      end
+
 
       it "assigns the originator as the user that is performing the invalidation" do
         subject
