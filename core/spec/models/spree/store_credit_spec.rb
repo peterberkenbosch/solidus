@@ -598,11 +598,6 @@ describe Spree::StoreCredit do
             expect { subject }.to change { Spree::StoreCreditEvent.count }.by(1)
             expect(Spree::StoreCreditEvent.last.originator).to eq originator
           end
-
-          it "records the originator on the ledger entry" do
-            expect { subject }.to change { Spree::StoreCreditLedgerEntry.count }.by(1)
-            expect(Spree::StoreCreditLedgerEntry.last.originator).to eq originator
-          end
         end
       end
 
