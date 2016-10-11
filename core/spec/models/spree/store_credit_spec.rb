@@ -58,10 +58,10 @@ describe Spree::StoreCredit do
     end
 
     context "creating ledger entry" do
-      let(:store_credit_attrs) { {amount: 250} }
+      let(:store_credit_attrs) { { amount: 250 } }
 
       it "on create" do
-        expect{store_credit.save}.to change {store_credit.store_credit_ledger_entries.count}.by 1
+        expect{store_credit.save}.to change { store_credit.store_credit_ledger_entries.count }.by 1
       end
 
       it "will have a balance equal to the amount" do
@@ -227,7 +227,7 @@ describe Spree::StoreCredit do
         it "will not store a ledger entry" do
           expect {
             store_credit.authorize(added_authorization_amount, store_credit.currency)
-          }.to_not change{store_credit.store_credit_ledger_entries.count}
+          }.to_not change{ store_credit.store_credit_ledger_entries.count }
         end
 
         context "originator is present" do
@@ -617,7 +617,6 @@ describe Spree::StoreCredit do
         it "will up the balance with the amount credited" do
           expect { subject }.to change { store_credit.ledger_balance }.by(credit_amount)
         end
-
       end
     end
   end
@@ -954,7 +953,7 @@ describe Spree::StoreCredit do
 
       it "will lower the ledger balance with the last remaining balance" do
         remaining_balance = store_credit.ledger_balance
-        expect { subject }.to change { store_credit.ledger_balance }.by(-1*remaining_balance)
+        expect { subject }.to change { store_credit.ledger_balance }.by(-1 * remaining_balance)
       end
 
       it "will made the ledger balance be 0.0" do
