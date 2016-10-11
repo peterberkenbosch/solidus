@@ -388,6 +388,11 @@ describe Spree::StoreCredit do
           expect { subject }.to change { Spree::StoreCreditEvent.count }.by(1)
           expect(Spree::StoreCreditEvent.last.originator).to eq originator
         end
+
+        it "records the originator on the ledger entry" do
+          expect { subject }.to change { Spree::StoreCreditLedgerEntry.count }.by(1)
+          expect(Spree::StoreCreditLedgerEntry.last.originator).to eq originator
+        end
       end
     end
   end
@@ -592,6 +597,11 @@ describe Spree::StoreCredit do
           it "records the originator" do
             expect { subject }.to change { Spree::StoreCreditEvent.count }.by(1)
             expect(Spree::StoreCreditEvent.last.originator).to eq originator
+          end
+
+          it "records the originator on the ledger entry" do
+            expect { subject }.to change { Spree::StoreCreditLedgerEntry.count }.by(1)
+            expect(Spree::StoreCreditLedgerEntry.last.originator).to eq originator
           end
         end
       end
@@ -871,6 +881,12 @@ describe Spree::StoreCredit do
 
       it "adds an entry to the ledger" do
         expect { subject }.to change { Spree::StoreCreditLedgerEntry.count }.by(1)
+      end
+
+      it "records the originator on the ledger entry" do
+        expect { subject }.to change { Spree::StoreCreditLedgerEntry.count }.by(1)
+        binding.pry
+        expect(Spree::StoreCreditLedgerEntry.last.originator).to eq invalidation_user
       end
 
       it "will update the balance to match the updated amount" do

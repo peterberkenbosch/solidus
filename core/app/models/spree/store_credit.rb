@@ -271,7 +271,12 @@ class Spree::StoreCredit < Spree::Base
       return if [AUTHORIZE_ACTION, VOID_ACTION].include?(action)
       ledger_entry_amount = -1 * action_amount
       ledger_entry_amount = action_amount if [INVALIDATE_ACTION, ADJUSTMENT_ACTION, CREDIT_ACTION].include?(action)
-      store_credit_ledger_entries.create!({ amount: ledger_entry_amount })
+      store_credit_ledger_entries.create!(
+        {
+          amount: ledger_entry_amount,
+          originator: action_originator
+        }
+      )
     end
   end
 
