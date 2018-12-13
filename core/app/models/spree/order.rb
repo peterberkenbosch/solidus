@@ -166,11 +166,11 @@ module Spree
     end
 
     def self.complete
-      where.not(completed_at: nil)
+      where.not(completed_at: nil).where(state: 'complete')
     end
 
     def self.incomplete
-      where(completed_at: nil)
+      where(completed_at: nil).where.not(state: 'complete')
     end
 
     def self.canceled
@@ -228,7 +228,7 @@ module Spree
     end
 
     def completed?
-      completed_at.present?
+      completed_at.present? && state == 'complete'
     end
 
     # Indicates whether or not the user is allowed to proceed to checkout.
