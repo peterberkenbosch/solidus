@@ -2,7 +2,7 @@
 
 source "https://rubygems.org"
 
-gem "middleman", "~> 4.2"
+gem "middleman", "~> 4.3", ">= 4.3.8"
 gem "oga", "~> 2.14"
 gem "nokogiri", "~>1.10.8"
 gem "middleman-s3_sync"
