@@ -7,7 +7,7 @@ module Spree
 
       included do
         include Spree::Preferences::Preferable
-        serialize :preferences, Hash
+        serialize :preferences, Hash, coder: YAML
         after_initialize :initialize_preference_defaults
       end
 
