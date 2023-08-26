@@ -350,5 +350,5 @@ workflows:
           matrix: { parameters: { rails: ['7.0'], ruby: ['3.2'], database: ['sqlite'], paperclip: [false] } }
       - test_solidus:
           name: *name
-          matrix: { parameters: { rails: ['master'], ruby: ['3.2'], database: ['postgres'], paperclip: [false] } }
+          matrix: { parameters: { rails: ['main'], ruby: ['3.2'], database: ['postgres'], paperclip: [false] } }
       - dev_tools
