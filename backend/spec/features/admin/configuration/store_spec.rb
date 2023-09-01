@@ -52,7 +52,7 @@ describe "Store", type: :feature, js: true do
       fill_in "Site Name", with: " "
       click_button "Update"
 
-      expect(page).to have_content("can't be blank")
+      expect(page).to have_content("can’t be blank")
       expect(page).to have_field("Site Name", with: " ")
     end
   end

@@ -395,7 +395,7 @@ module Spree::Api
           put spree.api_product_path(product), params: { product: { name: "" } }
           expect(response.status).to eq(422)
           expect(json_response["error"]).to eq("Invalid resource. Please fix errors and try again.")
-          expect(json_response["errors"]["name"]).to eq(["can't be blank"])
+          expect(json_response["errors"]["name"]).to eq(["can’t be blank"])
         end
 
         # Regression test for https://github.com/spree/spree/issues/4123

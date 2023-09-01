@@ -90,7 +90,7 @@ describe "Payment Methods", type: :feature do
     it "should display validation errors" do
       fill_in "payment_method_name", with: ""
       click_button "Update"
-      expect(page).to have_content("Name can't be blank")
+      expect(page).to have_content("Name can’t be blank")
     end
 
     context 'with payment method having hash and array as preference' do

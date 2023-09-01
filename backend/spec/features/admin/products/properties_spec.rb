@@ -72,7 +72,7 @@ describe "Properties", type: :feature do
     it "should show validation errors" do
       fill_in "property_name", with: ""
       click_button "Update"
-      expect(page).to have_content("Name can't be blank")
+      expect(page).to have_content("Name can’t be blank")
     end
   end
 

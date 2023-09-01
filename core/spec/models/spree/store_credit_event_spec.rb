@@ -55,7 +55,7 @@ RSpec.describe Spree::StoreCreditEvent do
 
         it "adds an error message indicating the store credit reason is missing" do
           subject
-          expect(event.errors.full_messages).to match ["Store credit reason can't be blank"]
+          expect(event.errors.full_messages).to match ["Store credit reason can’t be blank"]
         end
       end
     end
@@ -78,7 +78,7 @@ RSpec.describe Spree::StoreCreditEvent do
 
         it "adds an error message indicating the store credit reason is missing" do
           subject
-          expect(event.errors.full_messages).to match ["Store credit reason can't be blank"]
+          expect(event.errors.full_messages).to match ["Store credit reason can’t be blank"]
         end
       end
     end

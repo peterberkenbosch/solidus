@@ -42,7 +42,7 @@ describe 'Product Details', type: :feature do
 
       fill_in "product_slug", with: ''
       click_button "Update"
-      within('#product_slug_field') { expect(page).to have_content("can't be blank") }
+      within('#product_slug_field') { expect(page).to have_content("can’t be blank") }
 
       fill_in "product_slug", with: 'x'
       click_button "Update"

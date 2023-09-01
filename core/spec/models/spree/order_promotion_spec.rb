@@ -27,7 +27,7 @@ RSpec.describe Spree::OrderPromotion do
         promotion.codes << build(:promotion_code, promotion: promotion)
       end
 
-      it { is_expected.to include("can't be blank") }
+      it { is_expected.to include("can’t be blank") }
     end
   end
 

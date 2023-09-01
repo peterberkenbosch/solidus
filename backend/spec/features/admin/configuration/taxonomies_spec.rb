@@ -36,7 +36,7 @@ describe "Taxonomies", type: :feature do
     it "should display validation errors" do
       fill_in "taxonomy_name", with: ""
       click_button "Create"
-      expect(page).to have_content("can't be blank")
+      expect(page).to have_content("can’t be blank")
     end
 
     it "disables the button at submit", :js do

@@ -175,7 +175,7 @@ module Spree::Api
         put spree.api_checkout_path(order.to_param), params: { order_token: order.guest_token, order: { payments_attributes: [{ payment_method_id: @payment_method.id }] } }
         expect(response.status).to eq(422)
         source_errors = json_response['errors']['payments.source']
-        expect(source_errors).to include("can't be blank")
+        expect(source_errors).to include("can’t be blank")
       end
 
       describe 'setting the payment amount' do
@@ -252,10 +252,10 @@ module Spree::Api
 
           expect(response.status).to eq(422)
           cc_errors = json_response['errors']['payments.Credit Card']
-          expect(cc_errors).to include("Card Number can't be blank")
+          expect(cc_errors).to include("Card Number can’t be blank")
           expect(cc_errors).to include("Month is not a number")
           expect(cc_errors).to include("Year is not a number")
-          expect(cc_errors).to include("Verification Value can't be blank")
+          expect(cc_errors).to include("Verification Value can’t be blank")
         end
       end
 

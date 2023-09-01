@@ -117,7 +117,7 @@ RSpec.describe Spree::Address::StateValidator do
 
       subject
 
-      expect(address.errors.messages).to eq({ state: ["can't be blank"] })
+      expect(address.errors.messages).to eq({ state: ["can’t be blank"] })
     end
 
     context "state country doesn't match the address' country" do

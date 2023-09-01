@@ -374,7 +374,7 @@ RSpec.describe Spree::FulfilmentChanger do
 
       it "has an activemodel error hash" do
         subject
-        expect(shipment_splitter.errors.messages).to eq(desired_stock_location: ["can't be blank"])
+        expect(shipment_splitter.errors.messages).to eq(desired_stock_location: ["can’t be blank"])
       end
     end
 
@@ -434,7 +434,7 @@ RSpec.describe Spree::FulfilmentChanger do
 
       it "has an activemodel error hash" do
         subject
-        expect(shipment_splitter.errors.messages).to eq(desired_stock_location: ["can't be blank"])
+        expect(shipment_splitter.errors.messages).to eq(desired_stock_location: ["can’t be blank"])
       end
     end
   end

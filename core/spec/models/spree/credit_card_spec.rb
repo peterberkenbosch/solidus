@@ -42,13 +42,13 @@ RSpec.describe Spree::CreditCard, type: :model do
     it "should validate presence of number" do
       credit_card.attributes = valid_credit_card_attributes.except(:number)
       expect(credit_card).not_to be_valid
-      expect(credit_card.errors[:number]).to eq(["can't be blank"])
+      expect(credit_card.errors[:number]).to eq(["can’t be blank"])
     end
 
     it "should validate presence of security code" do
       credit_card.attributes = valid_credit_card_attributes.except(:verification_value)
       expect(credit_card).not_to be_valid
-      expect(credit_card.errors[:verification_value]).to eq(["can't be blank"])
+      expect(credit_card.errors[:verification_value]).to eq(["can’t be blank"])
     end
 
     it "validates name presence" do

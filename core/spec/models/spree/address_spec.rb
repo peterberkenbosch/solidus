@@ -29,20 +29,20 @@ RSpec.describe Spree::Address, type: :model do
         address.state = nil
         address.state_name = nil
         expect(address.valid?).to eq(false)
-        expect(address.errors['state']).to eq(["can't be blank"])
+        expect(address.errors['state']).to eq(["can’t be blank"])
       end
     end
 
     it "requires phone" do
       address.phone = ""
       address.valid?
-      expect(address.errors["phone"]).to eq(["can't be blank"])
+      expect(address.errors["phone"]).to eq(["can’t be blank"])
     end
 
     it "requires zipcode" do
       address.zipcode = ""
       address.valid?
-      expect(address.errors['zipcode']).to include("can't be blank")
+      expect(address.errors['zipcode']).to include("can’t be blank")
     end
 
     context "phone not required" do

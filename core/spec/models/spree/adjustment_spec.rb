@@ -196,7 +196,7 @@ RSpec.describe Spree::Adjustment, type: :model do
       context "when the promotion has a code" do
         let!(:promotion_code) { create(:promotion_code, promotion: promotion) }
 
-        it { is_expected.to include("can't be blank") }
+        it { is_expected.to include("can’t be blank") }
       end
     end
 

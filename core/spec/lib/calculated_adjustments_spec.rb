@@ -45,7 +45,7 @@ RSpec.describe Spree::CalculatedAdjustments do
 
       it 'is not valid' do
         expect(subject).not_to be_valid
-        expect(subject.errors[:calculator]).to eq ["can't be blank"]
+        expect(subject.errors[:calculator]).to eq ["can’t be blank"]
       end
     end
 

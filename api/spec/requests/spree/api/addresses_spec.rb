@@ -32,7 +32,7 @@ module Spree::Api
 
           expect(json_response['error']).not_to be_nil
           expect(json_response['errors']).not_to be_nil
-          expect(json_response['errors']['address1'].first).to eq "can't be blank"
+          expect(json_response['errors']['address1'].first).to eq "can’t be blank"
         end
       end
     end

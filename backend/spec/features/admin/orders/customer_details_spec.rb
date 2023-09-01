@@ -119,7 +119,7 @@ describe "Customer Details", type: :feature, js: true do
       order.update!(ship_address_id: nil)
       click_link "Customer"
       click_button "Update"
-      expect(page).to have_content("Shipping address name can't be blank")
+      expect(page).to have_content("Shipping address name can’t be blank")
     end
 
     context "for an order in confirm state with a user" do

@@ -215,9 +215,9 @@ describe 'Payments', type: :feature do
       it "is unable to create a new payment with invalid information" do
         click_button "Continue"
         expect(page).to have_content("Payment could not be created.")
-        expect(page).to have_content("Number can't be blank")
-        expect(page).to have_content("Name can't be blank")
-        expect(page).to have_content("Verification Value can't be blank")
+        expect(page).to have_content("Number can’t be blank")
+        expect(page).to have_content("Name can’t be blank")
+        expect(page).to have_content("Verification Value can’t be blank")
         expect(page).to have_content("Month is not a number")
         expect(page).to have_content("Year is not a number")
       end

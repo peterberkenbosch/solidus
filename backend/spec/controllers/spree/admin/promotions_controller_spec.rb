@@ -118,7 +118,7 @@ describe Spree::Admin::PromotionsController, type: :controller do
 
       it "sets the flash error" do
         subject
-        expect(flash[:error]).to eq "Name can't be blank"
+        expect(flash[:error]).to eq "Name can’t be blank"
       end
 
       it "renders new" do

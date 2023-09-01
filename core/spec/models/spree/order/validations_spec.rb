@@ -10,7 +10,7 @@ module Spree
         order = Spree::Order.new
         allow(order).to receive_messages(email_required?: true)
         order.valid?
-        expect(order.errors[:email]).to eq(["can't be blank"])
+        expect(order.errors[:email]).to eq(["can’t be blank"])
       end
     end
   end

@@ -63,7 +63,7 @@ module Spree::Api
               post spree.api_order_payments_path(order), params: { payment: { payment_method_id: Spree::PaymentMethod.first.id, amount: 50 } }
               expect(response.status).to eq(422)
               expect(json_response['error']).to eq("Invalid resource. Please fix errors and try again.")
-              expect(json_response['errors']['source']).to eq(["can't be blank"])
+              expect(json_response['errors']['source']).to eq(["can’t be blank"])
             end
           end
 

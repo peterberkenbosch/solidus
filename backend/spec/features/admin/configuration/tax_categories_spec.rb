@@ -40,7 +40,7 @@ describe "Tax Categories", type: :feature do
 
     it "should show validation errors if there are any" do
       click_button "Create"
-      expect(page).to have_content("Name can't be blank")
+      expect(page).to have_content("Name can’t be blank")
     end
   end
 

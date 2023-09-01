@@ -44,7 +44,7 @@ describe 'Promotion Categories', type: :feature do
       fill_in "promotion_category_name", with: ""
       fill_in "promotion_category_code", with: "prtest"
       click_button "Create"
-      expect(page).to have_content("Name can't be blank")
+      expect(page).to have_content("Name can’t be blank")
     end
   end
 
@@ -65,7 +65,7 @@ describe 'Promotion Categories', type: :feature do
     it "should show validation errors" do
       fill_in "promotion_category_name", with: ""
       click_button "Update"
-      expect(page).to have_content("Name can't be blank")
+      expect(page).to have_content("Name can’t be blank")
     end
   end
 
